@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  jmeter:
+    container_name: jmeter
+    build:
+      context: ./
+    image: iorga-group/jmeter
+    volumes:
+      - ./:/workdir
+    user: ${USER_UID}
+    command: ["bash", "-c", "mkdir run${RUN_NUMBER} && jmeter -n -t ${JMX_PATH} -l run${RUN_NUMBER}/log.csv -j run${RUN_NUMBER}/jmeter.log -e -o run${RUN_NUMBER}/report"]
+
