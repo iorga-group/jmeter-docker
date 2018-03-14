@@ -50,7 +50,25 @@ RUN set -eux; \
 	\
   mkdir -p /workdir;
 
-RUN cp -ar ${JMETER_HOME} ${JMETER_HOME}.orig
+RUN cp -ar ${JMETER_HOME} ${JMETER_HOME}.orig && \
+#  cp ${JMETER_BIN}/reportgenerator.properties ${JMETER_BIN}/user.properties && \
+  for PARAM in \
+      httpsampler.ignore_failed_embedded_resources \
+      jmeter.save.saveservice.assertion_results_failure_message \
+      jmeter.save.saveservice.bytes \
+      jmeter.save.saveservice.sent_bytes \
+      jmeter.save.saveservice.label \
+      jmeter.save.saveservice.latency \
+      jmeter.save.saveservice.response_code \
+      jmeter.save.saveservice.response_message \
+      jmeter.save.saveservice.successful \
+      jmeter.save.saveservice.thread_counts \
+      jmeter.save.saveservice.thread_name \
+      jmeter.save.saveservice.time \
+      jmeter.save.saveservice.connect_time \
+      httpclient4.request_sent_retry_enabled \
+    ; do sed -i -r -e "s/^#?$PARAM.*$/$PARAM=true/" ${JMETER_BIN}/jmeter.properties; done && \
+  sed -i -r -e "s/^#?httpclient4.retrycount.*$/httpclient4.retrycount=5/" ${JMETER_BIN}/jmeter.properties
 
 # Set global PATH such that "jmeter" command is found
 ENV PATH $PATH:$JMETER_BIN
